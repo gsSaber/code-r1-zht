@@ -104,7 +104,7 @@ def _compute_score(solution_str, ground_truth, extra_info, format_reward=0.1, an
         # stdin/stdout 风格：逐条比对，多条用例并发跑
         stdins, stdouts = tests["inputs"], tests["outputs"]
         with ThreadPoolExecutor(max_workers=min(8, len(stdins))) as pool:
-            futures = [pool.submit(remote_check_stdio, code, i, o) for i, o in zip(stdins, stdouts)]
+            futures = [pool.submit(remote_check_stdio, code, i, o) for i, o in zip(stdins, stdouts, strict=False)]
             for future in as_completed(futures):
                 succ, output, stdin, expected = future.result()
                 if not succ or output.strip() != expected.strip():

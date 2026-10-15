@@ -69,7 +69,7 @@ def build_row(split, prompt, tests_json, idx, dataset, reference):
 def minimize_stdio(inputs, outputs, max_n_tests=8):
     """保留最小的若干条 stdin/stdout 用例（越小跑得越快）。"""
     pairs = []
-    for stdin, stdout in zip(inputs, outputs):
+    for stdin, stdout in zip(inputs, outputs, strict=False):
         stdin = "\n".join(stdin) if isinstance(stdin, list) else stdin
         stdout = "\n".join(stdout) if isinstance(stdout, list) else stdout
         if sys.getsizeof(stdin) <= 4 * 1024:
@@ -148,7 +148,7 @@ for i, o in zip(_inputs, _outputs):
                 with ThreadPoolExecutor(max_workers=min(len(stdins), 8)) as pool:
                     futures = [
                         pool.submit(remote_check_stdio, example["solutions"][-1], i, o)
-                        for i, o in zip(stdins, stdouts)
+                        for i, o in zip(stdins, stdouts, strict=False)
                     ]
                     for future in as_completed(futures):
                         succ, output, stdin, expected = future.result()
@@ -228,7 +228,11 @@ def leetcode(leetcode_dir, n_testset=512):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--root_dir", default="./data/")
-    parser.add_argument("--leetcode_dir", default=os.environ.get("LEETCODE_DATASET_DIR"), help="LeetCodeDataset 仓库路径")
+    parser.add_argument(
+        "--leetcode_dir",
+        default=os.environ.get("LEETCODE_DATASET_DIR"),
+        help="LeetCodeDataset 仓库路径",
+    )
     parser.add_argument("--datasets", nargs="+", default=["leetcode", "taco"], choices=["leetcode", "taco"])
     parser.add_argument("--max_n_tests", type=int, default=8, help="每个样本保留多少条 stdin/stdout 用例")
     parser.add_argument("--num_proc", type=int, default=8)

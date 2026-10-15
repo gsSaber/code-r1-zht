@@ -73,8 +73,7 @@ def code_exec_firejail(code, stdin: str = None, timeout=_DEFAULT_TIMEOUT_SECONDS
             command,
             cwd=cwd,
             input=stdin.encode() if stdin else None,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
             env=env,
             timeout=timeout + 10,  # firejail 自己有 --timeout，这里只是兜底
             check=False,

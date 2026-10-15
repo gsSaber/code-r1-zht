@@ -19,7 +19,7 @@ pip install vllm flash-attn wandb gpustat --no-build-isolation
 sudo add-apt-repository ppa:deki/firejail && sudo apt-get update && sudo apt-get install firejail firejail-profiles
 ```
 
-要求：单机 8×GPU（`run_code_r1_grpo.sh` 的默认值，可用 `GPUS_PER_NODE` 改）+ vLLM。
+要求：单机 8×GPU（`run_code_r1_grpo_fsdp.sh` 的默认值，可用 `GPUS_PER_NODE` 改）+ vLLM。
 没有 Linux/沙箱也能验证数据与奖励链路，用 `CODER1_EXEC=local` 即可（见第 5 节）。
 
 ---
@@ -59,7 +59,7 @@ python examples/code_r1/data_preprocess/coder1.py \
 ```bash
 MODEL_PATH=Qwen/Qwen2.5-7B-Instruct-1M \
 DATA_DIR=./data/code-r1-12k \
-    bash examples/code_r1/run_code_r1_grpo.sh
+    bash examples/code_r1/run_code_r1_grpo_fsdp.sh
 ```
 
 可调的环境变量（都有默认值）：
@@ -145,7 +145,7 @@ python -m verl.model_merger merge --backend fsdp \
 
 训练脚本用的是**自定义 reward manager**；仓库里同时保留了**改核心**的方式，二选一即可。
 
-**自定义 reward manager**（`run_code_r1_grpo.sh` 用的就是这个）：
+**自定义 reward manager**（`run_code_r1_grpo_fsdp.sh` 用的就是这个）：
 
 ```bash
     reward.reward_manager.source=importlib \
@@ -184,7 +184,7 @@ extra_info   = {"split","index","prompt","reference","dataset"}   # 可选
 
 ```
 examples/code_r1/
-├── run_code_r1_grpo.sh             GRPO 训练启动脚本（主结果）
+├── run_code_r1_grpo_fsdp.sh        GRPO 训练启动脚本（主结果）
 ├── code_reward_manager.py          自定义奖励管理器（沙箱并发限流）
 ├── data_preprocess/
 │   ├── download_code_r1_12k.py     下载官方 12K + 沙箱复验参考解

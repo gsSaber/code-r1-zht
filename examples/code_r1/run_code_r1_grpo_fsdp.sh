@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Code-R1 GRPO（R1-Zero for code）—— 官方 main_grpo.sh 在 verl 0.10 上的写法。
-# 配置里最需要对照的迁移点（完整对照表见 examples/code_r1/README.md 第三节）：
+# 配置里最需要对照的迁移点（用法与参数表见仓库根 README.md 第 3 节）：
 #   reward_model.reward_manager=prime                        -> CodeR1RewardManager（自定义，见下）
 #   actor_rollout_ref.rollout.log_prob_micro_batch_size       -> ..._per_gpu
 #   （新增）                                                  -> reward.num_workers
 # 奖励管理器用 examples/code_r1/code_reward_manager.py 的 CodeR1RewardManager 换掉 naive：
 # 它给单个 reward worker 内的沙箱并发上了信号量。naive 下 8 worker × 32 样本/worker 会开出
 # 上百个 firejail（超配核数 2~12 倍），集体超时就是错误奖励。理由见该文件头部注释。
-# 需要：单机 8 GPU + vLLM + 一个沙箱后端（Linux 用 firejail，见 README 第五节）。
+# 需要：单机 8 GPU + vLLM + 一个沙箱后端（Linux 用 firejail，见仓库根 README.md 第 4 节）。
 set -xeuo pipefail
 
 REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
